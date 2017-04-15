@@ -131,16 +131,19 @@ class Producer:
     def down_torrent(m_hash, path):
         cmd = "cao/rmdown.pl "+m_hash+" "+path
         print(cmd)
-        os.system(cmd)
+        os.system(cmd)  # download torrent file
+        cmd = "transmission-remote -n " \
+              "'transmission:transmission' -a " + path + m_hash + ".torrent"# + " -w " + path
+        # cmd = "deluge-console  add " + path + m_hash + ".torrent"
+        os.system(cmd)  # download file
 
     def get_image_from_obj(self, image_list, abs_path):
         l = len(image_list)
         if l:
             while l:
                 link = image_list[l - 1]
-                # base dir + m_dir + number
-                # filename = abs_path + str(l) + u'.jpg'
-                filename = abs_path + str(l) + u'.jpg'
+                real_name = str(l) + u'.jpg'
+                filename = abs_path + real_name
                 print(filename)
                 if self.check_if_to_download(filename):
                     self.get_image_from_link(link, filename)
@@ -149,12 +152,11 @@ class Producer:
     # download image
     def get_torrent_from_obj(self, torrent_list, abs_path):
         l = len(torrent_list)
-        # self.check_make_dir(abs_path)
         if l:
             while l:
                 m_hash = str(torrent_list[l - 1]).split("hash=")
                 l -= 1
-                if not os.path.exists(m_hash[-1] + ".torrent"):
+                if not os.path.exists(abs_path + m_hash[-1] + ".torrent"):
                     self.down_torrent(m_hash[-1], abs_path)
 
     # download torrent
@@ -163,10 +165,7 @@ class Producer:
         print("abs_path =" + path)
         if path is not None:
             abs_path = self.base_dir + path + "/"
-            # print("abs_path =" + abs_path)
-            # if len(abs_path):
-            #     abs_path = abs_path[:50]
-            print("abs_path =" + abs_path)
+            print("abs_path = " + abs_path)
 
             self.check_make_dir(abs_path)
 
@@ -209,8 +208,6 @@ class Producer:
         parsed = urlparse2.urlparse(url)
         root, ext = splitext(parsed.path)
         return ext  # or ext[1:] if you don't want the leading '.'
-
-
 
 """
 def thread_down():
