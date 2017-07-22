@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import jsonlines
 import os
+# import argparse
 # import time
 # import urllib
 import urlparse2
@@ -48,6 +49,8 @@ class Producer:
     percent = 0
     base_dir = u"Down/"
     file = u""
+    getImage = 0
+    getTorrent = 0
     # all the url and name are stored in the list
     m_list = []
 
@@ -57,6 +60,8 @@ class Producer:
         self.total = 0
         self.downloaded = 0
         self.base_dir = u"Down/"
+        self.getImage = 0
+        self.getTorrent = 0
 
     @staticmethod
     def check_make_dir(m_dir):
@@ -128,15 +133,16 @@ class Producer:
             return True
 
     @staticmethod
-    def down_torrent(m_hash, path):
-        cmd = "cao/rmdown.pl "+m_hash+" "+path
+    def down_torrent(self, m_hash, path):
+        cmd = "cao/rmdown.pl "+m_hash+" "+self.base_dir#+path
         print(cmd)
         os.system(cmd)  # download torrent file
+        '''
         cmd = "transmission-remote -n " \
               "'transmission:transmission' -a " + path + m_hash + ".torrent"# + " -w " + path
         # cmd = "deluge-console  add " + path + m_hash + ".torrent"
         os.system(cmd)  # download file
-
+        '''
     def get_image_from_obj(self, image_list, abs_path):
         l = len(image_list)
         if l:
@@ -157,24 +163,24 @@ class Producer:
                 m_hash = str(torrent_list[l - 1]).split("hash=")
                 l -= 1
                 if not os.path.exists(abs_path + m_hash[-1] + ".torrent"):
-                    self.down_torrent(m_hash[-1], abs_path)
+                    self.down_torrent(self, m_hash[-1], abs_path)
 
     # download torrent
     def get_all_obj_image_torrent(self, obj):
         path = self.get_title_name(obj)  # title name
-        #print("abs_path =" + path)
+        # print("abs_path =" + path)
         if path is not None:
             abs_path = self.base_dir + path #+ "/"
             print("abs_path = " + abs_path)
 
-            #self.check_make_dir(abs_path)
+            # self.check_make_dir(abs_path)
             self.check_make_dir(self.base_dir)
-
-            image_list = obj["t_image_list"]  # for images
-            self.get_image_from_obj(image_list, abs_path)
-
-            # torrent_list = obj["t_torrent_list"]  # for torrent file
-            # self.get_torrent_from_obj(torrent_list, abs_path)
+            if self.getImage == 1:
+                image_list = obj["t_image_list"]  # for images
+                self.get_image_from_obj(image_list, abs_path)
+            if self.getTorrent == 1:
+                torrent_list = obj["t_torrent_list"]  # for torrent file
+                self.get_torrent_from_obj(torrent_list, abs_path)
 
     # parse the  file
     def parse_file(self):
@@ -276,6 +282,9 @@ def worker():
 def main():
     # get filename from argument
     file = sys.argv[1]
+    get_image = int(sys.argv[2])
+    get_torrent = int(sys.argv[3])
+
 
     # register signal handler
     signal.signal(signal.SIGINT, signal_handler)
@@ -286,6 +295,8 @@ def main():
     # print "max_thread_count = " + str(max_thread_count)
     p = Producer()
     p.file = file
+    p.getImage = get_image
+    p.getTorrent = get_torrent
     p.parse_file()
     p.check_make_dir(p.base_dir)
     # p.get_all_links()

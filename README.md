@@ -43,7 +43,7 @@ pipeline 还没写，需要把输出保存到文件的话加一个 -o 参数，�
 下載圖片可以使用如下的命令, 默認圖片的存儲路徑是 Down
 
     cd ..
-    python3 scripts/download.py t66ySpider/yazhou.jl
+    python3 scripts/download.py t66ySpider/yazhou.jl 1 0
 
 # 数据格式
 
