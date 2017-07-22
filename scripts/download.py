@@ -162,18 +162,19 @@ class Producer:
     # download torrent
     def get_all_obj_image_torrent(self, obj):
         path = self.get_title_name(obj)  # title name
-        print("abs_path =" + path)
+        #print("abs_path =" + path)
         if path is not None:
-            abs_path = self.base_dir + path + "/"
+            abs_path = self.base_dir + path #+ "/"
             print("abs_path = " + abs_path)
 
-            self.check_make_dir(abs_path)
+            #self.check_make_dir(abs_path)
+            self.check_make_dir(self.base_dir)
 
             image_list = obj["t_image_list"]  # for images
             self.get_image_from_obj(image_list, abs_path)
 
-            torrent_list = obj["t_torrent_list"]  # for torrent file
-            self.get_torrent_from_obj(torrent_list, abs_path)
+            # torrent_list = obj["t_torrent_list"]  # for torrent file
+            # self.get_torrent_from_obj(torrent_list, abs_path)
 
     # parse the  file
     def parse_file(self):

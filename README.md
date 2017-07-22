@@ -38,7 +38,12 @@ scrapy 支持搭配 shadowsocks, tor 等等各种 socks 代理和各种 http 代
 
 pipeline 还没写，需要把输出保存到文件的话加一个 -o 参数，详情可参考 scrapy 文档，默认格式为 jsonlines。命令格式参考下面这条
 
-    proxychains4 scrapy crawl DaGaiEr -o DaGaiErDeQiZhi.jsonlines
+    proxychains4 scrapy crawl DaGaiEr -o DaGaiErDeQiZhi.jl
+
+下載圖片可以使用如下的命令, 默認圖片的存儲路徑是 Down
+
+    cd ..
+    python3 scripts/download.py t66ySpider/yazhou.jl
 
 # 数据格式
 
