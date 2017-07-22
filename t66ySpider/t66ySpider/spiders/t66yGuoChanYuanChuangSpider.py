@@ -29,7 +29,7 @@ class t66yGuochanyuanchuangSpider(scrapy.Spider):
         yield scrapy.Request(next_page_url, callback=self.parse)
 
     def parse_thread(self, response):
-        item = T66YspiderYazhouwumaItem()
+        item = T66YspiderGuochanyuanchuangItem()
         item['t_title']         = response.selector.xpath('string(//title)')[0].extract()
         item['t_url']           = response.url
 

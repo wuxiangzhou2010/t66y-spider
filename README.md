@@ -33,6 +33,10 @@ A crawler for images, torrents and videos on [t66y.com](t66y.com)
     
     scrapy crawl YaZhouYouMaZhuanTie
     
+    # 國產原創区，同上
+    
+    scrapy crawl GuoChanYuanChuang
+    
 scrapy 支持搭配 shadowsocks, tor 等等各种 socks 代理和各种 http 代理，如需使用代理，可在配置文件中设置, 
 也可以直接用 proxychains-ng 一类工具。例如使用 proxychians-ng 时，在每个命令前加上 proxychians4 即可
 
@@ -61,6 +65,12 @@ pipeline 还没写，需要把输出保存到文件的话加一个 -o 参数，�
                   't_torrent_list'  : list  , 种子地址
 
     YaZhouYouMa : 't_title'         : string, 标题
+                  't_url'           : string, url
+                  't_image_list'    : list  , 大图源地址（会自动把 imgchili 和 imagetwist 的缩略图转为原图）
+                  't_torrent_list'  : list  , 种子地址
+
+   GuoChanYuanChuang : 
+                  't_title'         : string, 标题
                   't_url'           : string, url
                   't_image_list'    : list  , 大图源地址（会自动把 imgchili 和 imagetwist 的缩略图转为原图）
                   't_torrent_list'  : list  , 种子地址
