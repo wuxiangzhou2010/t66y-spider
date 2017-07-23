@@ -7,7 +7,7 @@ A crawler for images, torrents and videos on [t66y.com](t66y.com)
 
     git clone https://github.com/Nymphet/t66y-spider.git
     
-    cd t66ySpider
+    cd t66ySpider/t66ySpider
     
     # 爬達蓋爾的旗幟的帖子，保存帖子标题和图片地址
     
@@ -37,6 +37,18 @@ A crawler for images, torrents and videos on [t66y.com](t66y.com)
     
     scrapy crawl GuoChanYuanChuang
     
+    # 中字原創
+    
+    ZhongZiYuanChuang
+    
+    # 歐美原創
+    
+    scrapy crawl OuMeiYuanChuang
+    
+    # 轉帖交流區
+    
+    scrapy crawl ZhuanTieJiaoLiu
+    
 scrapy 支持搭配 shadowsocks, tor 等等各种 socks 代理和各种 http 代理，如需使用代理，可在配置文件中设置, 
 也可以直接用 proxychains-ng 一类工具。例如使用 proxychians-ng 时，在每个命令前加上 proxychians4 即可
 
@@ -53,30 +65,24 @@ pipeline 还没写，需要把输出保存到文件的话加一个 -o 参数，�
 
 默认格式为 jsonline，python 可以用 ast.literal_eval 读取。各爬虫抓的数据不同，可以查看 items.py 内的定义。目前主要有：
 
-    DaGaiEr     : 't_title'         : string, 标题
-                  't_image_list'    : list  , 大图源地址
-
+    DaGaiEr     :
     XinShiDai   : 't_title'         : string, 标题
                   't_image_list'    : list  , 大图源地址
                   
-    YaZhouWuMa  : 't_title'         : string, 标题
-                  't_url'           : string, url
-                  't_image_list'    : list  , 大图源地址（会自动把 imgchili 和 imagetwist 的缩略图转为原图）
-                  't_torrent_list'  : list  , 种子地址
-
-    YaZhouYouMa : 't_title'         : string, 标题
-                  't_url'           : string, url
-                  't_image_list'    : list  , 大图源地址（会自动把 imgchili 和 imagetwist 的缩略图转为原图）
-                  't_torrent_list'  : list  , 种子地址
-
-   GuoChanYuanChuang : 
+    YaZhouWuMa          : 
+    YaZhouYouMa         : 
+    GuoChanYuanChuang   :
+    OuMeiYuanChuang     :
+    ZhongZiYuanChuang   :
+    YaZhouWuMaZhuanTie  :
+    YaZhouYouMaZhuanTie :
+    ZhuanTieJiaoLiu:
                   't_title'         : string, 标题
                   't_url'           : string, url
                   't_image_list'    : list  , 大图源地址（会自动把 imgchili 和 imagetwist 的缩略图转为原图）
                   't_torrent_list'  : list  , 种子地址
     
-    YaZhouWuMaZhuanTie 和 YaZhouYouMaZhuanTie 分别是上面两个板块的子板，直接使用父板块的数据格式。
-    
+ 
 # 其它
 
 草榴社区的种子都是传到 rmdown 的，这个爬虫只抽取种子地址，不自动下载种子。如需自动下载，可调用
