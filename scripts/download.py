@@ -282,50 +282,60 @@ def worker():
 def main():
     # get filename from argument
     file = sys.argv[1]
-    get_image = int(sys.argv[2])
-    get_torrent = int(sys.argv[3])
+    if file in ['YaZhouWuMa', 'YaZhouYouMa', 'GuoChanYuanChuang',
+                'OuMeiYuanChuang', 'ZhongZiYuanChuang','YaZhouWuMaZhuanTie',
+                'YaZhouYouMaZhuanTie', 'ZhuanTieJiaoLiu']:
+
+        cmd = "cd t66ySpider; scrapy crawl " + file + " -o " + file+".jl; cd .."
+        print(cmd)
+        os.system(cmd)
+    #else:
+        file = "t66ySpider/" + file+".jl"
+        get_image = int(sys.argv[2])
+        get_torrent = int(sys.argv[3])
 
 
-    # register signal handler
-    signal.signal(signal.SIGINT, signal_handler)
-    print('Press Ctrl+C')
-    # signal.pause()
-    # make_del_dir()
-    # max_thread_count = sys.argv[2]
-    # print "max_thread_count = " + str(max_thread_count)
-    p = Producer()
-    p.file = file
-    p.getImage = get_image
-    p.getTorrent = get_torrent
-    p.parse_file()
-    p.check_make_dir(p.base_dir)
-    # p.get_all_links()
+        # register signal handler
+        signal.signal(signal.SIGINT, signal_handler)
+        print('Press Ctrl+C')
+        # signal.pause()
+        # make_del_dir()
+        # max_thread_count = sys.argv[2]
+        # print "max_thread_count = " + str(max_thread_count)
+        p = Producer()
+        p.file = file
+        p.getImage = get_image
+        p.getTorrent = get_torrent
+        p.parse_file()
+        p.check_make_dir(p.base_dir)
+        # p.get_all_links()
 
-    # q = Queue()
-    # for i in range(20):
-    #      t = Thread(target= p.get_all_links())
-    #      t.daemon = True
-    #      t.start()
+        # q = Queue()
+        # for i in range(20):
+        #      t = Thread(target= p.get_all_links())
+        #      t.daemon = True
+        #      t.start()
 
-    # for item in source():
-    #     q.put(item)
+        # for item in source():
+        #     q.put(item)
 
-    # q.join()       # block until all tasks are done
-    #################
-    # lock = Lock()
-    # for i in range(10):
-    #     print "active cout "+ str(threading.activeCount())
-    #     Process(target=p.get_all_links, args=(lock,)).start()
+        # q.join()       # block until all tasks are done
+        #################
+        # lock = Lock()
+        # for i in range(10):
+        #     print "active cout "+ str(threading.activeCount())
+        #     Process(target=p.get_all_links, args=(lock,)).start()
 
-    pool = ThreadPool(12)
+        pool = ThreadPool(12)
 
-    # can not use CTRL+C, blocking
-    # pool.map(p.get_all_links, list)
-    # can use CTRL+C, non blocking
-    # pool.map_async(p.get_all_links, range(500)).get(9999999)
-    pool.map_async(p.get_all_links, p.m_list).get(9999999)
-    # pool.close()
-    # pool.join()
-
+        # can not use CTRL+C, blocking
+        # pool.map(p.get_all_links, list)
+        # can use CTRL+C, non blocking
+        # pool.map_async(p.get_all_links, range(500)).get(9999999)
+        pool.map_async(p.get_all_links, p.m_list).get(9999999)
+        # pool.close()
+        # pool.join()
+    else:
+        pass
 if __name__ == "__main__":
     main()
