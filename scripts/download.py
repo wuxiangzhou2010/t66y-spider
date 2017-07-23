@@ -280,6 +280,10 @@ def worker():
 
 
 def main():
+    # get torrent_downloader
+    if not os.path.exists('cao'):
+        cmd = "git clone https://github.com/xihajuan2010/caoliu-synchronizer.git cao"
+        os.system(cmd)
     # get filename from argument
     file = sys.argv[1]
     if file in ['YaZhouWuMa', 'YaZhouYouMa', 'GuoChanYuanChuang',
