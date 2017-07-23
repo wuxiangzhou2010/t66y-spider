@@ -52,14 +52,7 @@ A crawler for images, torrents and videos on [t66y.com](t66y.com)
 scrapy 支持搭配 shadowsocks, tor 等等各种 socks 代理和各种 http 代理，如需使用代理，可在配置文件中设置, 
 也可以直接用 proxychains-ng 一类工具。例如使用 proxychians-ng 时，在每个命令前加上 proxychians4 即可
 
-pipeline 还没写，需要把输出保存到文件的话加一个 -o 参数，详情可参考 scrapy 文档，默认格式为 jsonlines。命令格式参考下面这条
-
-    proxychains4 scrapy crawl DaGaiEr -o DaGaiErDeQiZhi.jl
-
-下載圖片可以使用如下的命令, 默認圖片的存儲路徑是 Down
-
-    cd ..
-    python3 scripts/download.py t66ySpider/yazhou.jl 1 0
+    ./scripts/download.py GuoChanYuanChuang 1 0
 
 # 数据格式
 

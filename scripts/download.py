@@ -287,10 +287,11 @@ def main():
                 'YaZhouYouMaZhuanTie', 'ZhuanTieJiaoLiu']:
 
         cmd = "cd t66ySpider; scrapy crawl " + file + " -o " + file+".jl; cd .."
-        print(cmd)
-        os.system(cmd)
+        file = "t66ySpider/" + file + ".jl"
+        print(cmd, file)
+        if not os.path.exists(file):
+            os.system(cmd)
     #else:
-        file = "t66ySpider/" + file+".jl"
         get_image = int(sys.argv[2])
         get_torrent = int(sys.argv[3])
 
