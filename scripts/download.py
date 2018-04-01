@@ -2,46 +2,28 @@
 # -*- coding: utf-8 -*-
 import jsonlines
 import os
-# import argparse
-# import time
-# import urllib
 import urlparse2
 from os.path import splitext
 import shutil
-# import wget
 from urllib.request import FancyURLopener
-# import sys
-# import threading
-# from threading import Thread, Lock
 
 from PIL import Image
 import re
 
 import signal
 import sys
-# import imghdr
-# from threading import Thread
 from multiprocessing.pool import ThreadPool
-
-# from Queue import Queue
-
-# from multiprocessing import Process, Lock
 
 pattern = re.compile(r'fuskator')  # some url seems blocked
 
 temp_i = 0
 dir_name = ""
 image_type = ["&jpg"]
-# mutex = Lock()
 max_thread_count = 0
 
-# with jsonlines.open(sys.argv[1]+'.jsonlines') as reader:
-#     for obj in reader:
-#         image_list = obj["t_image_list"] # get image list
-#         if image_list: # if image list not NULL
-#             for image in image_list:
-#                 total=total+1
-
+category = ('YaZhouWuMa', 'YaZhouYouMa', 'GuoChanYuanChuang',
+ 'OuMeiYuanChuang', 'ZhongZiYuanChuang','YaZhouWuMaZhuanTie',
+ 'YaZhouYouMaZhuanTie', 'ZhuanTieJiaoLiu', 'XinShiDai')
 
 class Producer:
     total = 0
@@ -55,13 +37,13 @@ class Producer:
     m_list = []
 
     # get all the list, with path and name
-    def __init__(self):
+    def __init__(self,getImage, getTorrent):
         self.percent = 0
         self.total = 0
         self.downloaded = 0
         self.base_dir = u"Down/"
-        self.getImage = 0
-        self.getTorrent = 0
+        self.getImage = getImage
+        self.getTorrent = getTorrent
 
     @staticmethod
     def check_make_dir(m_dir):
@@ -91,12 +73,6 @@ class Producer:
     def verify_image(image_name):
         try:
             Image.open(image_name)
-            # print "v_image.verify() " +str(v_image.verify())
-            # if  v_image.verify():
-            # v_image.verify()
-            # return True
-            # else:
-            # print "image is wrong"
         except Exception as e:
             print("verify_image  ERROR_CODE:" + ":" + str(e))
             return False
@@ -105,25 +81,10 @@ class Producer:
 
     @staticmethod
     def check_if_to_download(image):
-        # global temp_i
-        # global downloaded
-        # global dir_name
-        # global image_type
-        # i = temp_i
-        # ext = str(image[-4:])
-        # if ext in image_type:
-        #     pass
-        # else:
-        #     image_type.append(ext)
-        # ext= str(get_ext(image)) ## get image type
-        # if str(ext) == ".php" or str(image[-4:]) =="&jpg":
-        #     ext=".jpg"
-        # name= dir_name + "/"+ str(i) +ext
-        # print "downloading",image
         if os.path.exists(image):
             try:
                 # try to open the image, if file is ok,
-                #  then it will not through exception
+                #  then it will not throw exception
                 Image.open(image)
             except Exception as e:
                 print("verify_image  ERROR_CODE:" + ":" + str(e))
@@ -143,6 +104,7 @@ class Producer:
         # cmd = "deluge-console  add " + path + m_hash + ".torrent"
         os.system(cmd)  # download file
         '''
+
     def get_image_from_obj(self, image_list, abs_path):
         l = len(image_list)
         if l:
@@ -216,131 +178,52 @@ class Producer:
         root, ext = splitext(parsed.path)
         return ext  # or ext[1:] if you don't want the leading '.'
 
-"""
-def thread_down():
-    while threading.threading.activeCount()() >12:
-        pass
-    if pattern.search(image):
-        #temp_i += 1
-        print("blocked url")
-        pass # blocked url
-
-    else:
-        threads = threading.Thread(target=fetch_url, args=(image,name))
-        threads.start()
-    print ("active thread count  = " + str(count))
-    #downloaded
-
-"""
-
-"""
-class Downloader:
-    def __init__(self):
-        pass
-
-    def threading_download2(m_image_list):
-        global temp_i
-        global pattern
-        length = len(m_image_list)
-        while temp_i < length:
-            image = m_image_list[temp_i]
-            #global name
-            (return_code, name) = check_if_to_downloas(image)
-            count = threading.threading.activeCount()()
-            if return_code:
-                pass
-            else:
-                pass
-            percent = downloaded*10/(total*0.1)
-            print "%.4f%%  downloaded  %s/%s" % (percent, downloaded, total)
-            mutex.acquire(blocking)
-            temp_i += 1
-            mutex.release()
-"""
-
-
 # use custom urllib opener
 class MyOpener(FancyURLopener, object):
     version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
-
+# handle ctrl + c
 def signal_handler(a, b):
     print('You pressed Ctrl+C!')
     sys.exit(0)
 
-
-"""
-
-def worker():
-    while True:
-        item = q.get()
-        do_work(item)
-        q.task_done()
-"""
-
-
-def main():
+def getTorrentDownloader():
     # get torrent_downloader
     if not os.path.exists('cao'):
         cmd = "git clone https://github.com/xihajuan2010/caoliu-synchronizer.git cao"
         os.system(cmd)
+
+def regSigHandler():
+    # register signal handler
+    signal.signal(signal.SIGINT, signal_handler)
+    print('Press Ctrl+C')
+
+
+def main():
+    getTorrentDownloader()
+
     # get filename from argument
     file = sys.argv[1]
-    if file in ['YaZhouWuMa', 'YaZhouYouMa', 'GuoChanYuanChuang',
-                'OuMeiYuanChuang', 'ZhongZiYuanChuang','YaZhouWuMaZhuanTie',
-                'YaZhouYouMaZhuanTie', 'ZhuanTieJiaoLiu']:
-
+    if file in category:
         cmd = "cd t66ySpider; scrapy crawl " + file + " -o " + file+".jl; cd .."
         file = "t66ySpider/" + file + ".jl"
         print(cmd, file)
         if not os.path.exists(file):
             os.system(cmd)
-    #else:
-        get_image = int(sys.argv[2])
-        get_torrent = int(sys.argv[3])
+
+        need_image = int(sys.argv[2])
+        need_torrent = int(sys.argv[3])
 
 
-        # register signal handler
-        signal.signal(signal.SIGINT, signal_handler)
-        print('Press Ctrl+C')
-        # signal.pause()
-        # make_del_dir()
-        # max_thread_count = sys.argv[2]
-        # print "max_thread_count = " + str(max_thread_count)
-        p = Producer()
+        p = Producer(get_image, get_torrent)
         p.file = file
-        p.getImage = get_image
-        p.getTorrent = get_torrent
         p.parse_file()
         p.check_make_dir(p.base_dir)
-        # p.get_all_links()
-
-        # q = Queue()
-        # for i in range(20):
-        #      t = Thread(target= p.get_all_links())
-        #      t.daemon = True
-        #      t.start()
-
-        # for item in source():
-        #     q.put(item)
-
-        # q.join()       # block until all tasks are done
-        #################
-        # lock = Lock()
-        # for i in range(10):
-        #     print "active cout "+ str(threading.activeCount())
-        #     Process(target=p.get_all_links, args=(lock,)).start()
 
         pool = ThreadPool(12)
-
-        # can not use CTRL+C, blocking
-        # pool.map(p.get_all_links, list)
-        # can use CTRL+C, non blocking
-        # pool.map_async(p.get_all_links, range(500)).get(9999999)
         pool.map_async(p.get_all_links, p.m_list).get(9999999)
-        # pool.close()
-        # pool.join()
     else:
         pass
+
 if __name__ == "__main__":
     main()
