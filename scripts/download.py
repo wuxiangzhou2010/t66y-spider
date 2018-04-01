@@ -185,8 +185,8 @@ class Producer:
         return ext  # or ext[1:] if you don't want the leading '.'
 
 # use custom urllib opener
-class MyOpener(FancyURLopener, object):
-    version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
+# class MyOpener(FancyURLopener, object):
+#     version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
 # handle ctrl + c
 def signal_handler(a, b):
