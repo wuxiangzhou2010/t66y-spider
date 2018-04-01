@@ -47,7 +47,7 @@ class Producer:
             if os.name == 'nt':
                 shutil.rmtree(m_dir)
             else:
-                os.mkdir(m_dir, mode=0o777)
+                os.mkdir(m_dir, mode=00777)
         else:
             pass
 
@@ -213,7 +213,7 @@ def main():
         registerSignalHandler()
 
         p = Producer(needImage, needTorrent, path)
-        # p.file = file
+
         p.parse_file()
         p.check_make_dir(p.base_dir)
 
