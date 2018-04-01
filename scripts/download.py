@@ -26,24 +26,20 @@ category = ('YaZhouWuMa', 'YaZhouYouMa', 'GuoChanYuanChuang',
  'YaZhouYouMaZhuanTie', 'ZhuanTieJiaoLiu', 'XinShiDai')
 
 class Producer:
-    total = 0
-    downloaded = 0
-    percent = 0
-    base_dir = u"Down/"
-    file = u""
-    getImage = 0
-    getTorrent = 0
+
+    file_path = u""
     # all the url and name are stored in the list
     m_list = []
 
     # get all the list, with path and name
-    def __init__(self,getImage, getTorrent):
+    def __init__(self,needImage, needTorrent, file_path):
         self.percent = 0
         self.total = 0
+        self.file_path = file_path
         self.downloaded = 0
         self.base_dir = u"Down/"
-        self.getImage = getImage
-        self.getTorrent = getTorrent
+        self.needImage = needImage
+        self.needTorrent = needTorrent
 
     @staticmethod
     def check_make_dir(m_dir):
@@ -137,10 +133,10 @@ class Producer:
 
             # self.check_make_dir(abs_path)
             self.check_make_dir(self.base_dir)
-            if self.getImage == 1:
+            if self.needImage == 1:
                 image_list = obj["t_image_list"]  # for images
                 self.get_image_from_obj(image_list, abs_path)
-            if self.getTorrent == 1:
+            if self.needTorrent == 1:
                 torrent_list = obj["t_torrent_list"]  # for torrent file
                 self.get_torrent_from_obj(torrent_list, abs_path)
 
@@ -193,7 +189,7 @@ def getTorrentDownloader():
         cmd = "git clone https://github.com/xihajuan2010/caoliu-synchronizer.git cao"
         os.system(cmd)
 
-def regSigHandler():
+def registerSignalHandler():
     # register signal handler
     signal.signal(signal.SIGINT, signal_handler)
     print('Press Ctrl+C')
@@ -203,20 +199,21 @@ def main():
     getTorrentDownloader()
 
     # get filename from argument
-    file = sys.argv[1]
-    if file in category:
-        cmd = "cd t66ySpider; scrapy crawl " + file + " -o " + file+".jl; cd .."
-        file = "t66ySpider/" + file + ".jl"
-        print(cmd, file)
-        if not os.path.exists(file):
+    cat = sys.argv[1]
+    if cat in category:
+        cmd = "cd t66ySpider; scrapy crawl " + cat + " -o " + cat+".jl; cd .."
+        path = "t66ySpider/" + cat + ".jl"
+        print(cmd, path)
+        if not os.path.exists(path):
             os.system(cmd)
 
-        need_image = int(sys.argv[2])
-        need_torrent = int(sys.argv[3])
+        needImage = int(sys.argv[2])
+        needTorrent = int(sys.argv[3])
 
+        registerSignalHandler()
 
-        p = Producer(get_image, get_torrent)
-        p.file = file
+        p = Producer(needImage, needTorrent, path)
+        # p.file = file
         p.parse_file()
         p.check_make_dir(p.base_dir)
 
