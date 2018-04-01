@@ -5,7 +5,10 @@ import os
 import urlparse2
 from os.path import splitext
 import shutil
-from urllib.request import FancyURLopener
+# from urllib.request import FancyURLopener
+# import urllib2    
+# import wget
+import requests
 
 from PIL import Image
 import re
@@ -37,9 +40,10 @@ class Producer:
         self.total = 0
         self.file_path = file_path
         self.downloaded = 0
-        self.base_dir = u"Down/"
+        self.base_dir = u"/home/pi/Down/Down/"
         self.needImage = needImage
         self.needTorrent = needTorrent
+        self.parse_file()
 
     @staticmethod
     def check_make_dir(m_dir):
@@ -47,7 +51,7 @@ class Producer:
             if os.name == 'nt':
                 shutil.rmtree(m_dir)
             else:
-                os.mkdir(m_dir, mode=00777)
+                os.mkdir(m_dir, mode=0o777)
         else:
             pass
 
@@ -108,7 +112,7 @@ class Producer:
                 link = image_list[l - 1]
                 real_name = str(l) + u'.jpg'
                 filename = abs_path + real_name
-                print(filename)
+                # print('    ', filename)
                 if self.check_if_to_download(filename):
                     self.get_image_from_link(link, filename)
                 l = l - 1
@@ -129,7 +133,7 @@ class Producer:
         # print("abs_path =" + path)
         if path is not None:
             abs_path = self.base_dir + path #+ "/"
-            print("abs_path = " + abs_path)
+            # print("abs_path = " + abs_path)
 
             # self.check_make_dir(abs_path)
             self.check_make_dir(self.base_dir)
@@ -150,22 +154,28 @@ class Producer:
 
     def print_progress(self):
         self.percent = self.downloaded * 10 / (self.total * 0.1)
-        print('%.4f%%  downloaded  %s/%s' % (self.percent, self.downloaded, self.total))
+        print('###### %.4f%%  downloaded  %s/%s ######' % (self.percent, self.downloaded, self.total))
 
     # get download percentage
     def get_all_links(self, item):
         self.get_all_obj_image_torrent(item)
-        self.downloaded = self.downloaded + 1
+        self.downloaded += 1
         self.print_progress()
 
     @staticmethod
     def get_image_from_link(link, name):
         try:
-            m_opener = MyOpener()
-            print("downloading", link)
-            m_opener.retrieve(link, name)
+            # m_opener = MyOpener()
+            print('    ', name)
+            print("     downloading", link)
+            # m_opener.retrieve(link, name)
+            # wget.download(link, name) ##ok
+            r = requests.get(link)
+            with open(name, "wb") as f:
+                f.write(r.content)
+           
         except Exception as e:
-            print("m_opener EORROR name:" + name + " ERROR_CODE:" + ":" + str(e))
+            print("get_image_from_link EORROR name:" + name + " ERROR_CODE:" + ":" + str(e))
 
     @staticmethod
     def get_ext(url):
@@ -196,13 +206,13 @@ def registerSignalHandler():
 
 
 def main():
-    getTorrentDownloader()
+    # getTorrentDownloader()
 
     # get filename from argument
     cat = sys.argv[1]
     if cat in category:
         cmd = "cd t66ySpider; scrapy crawl " + cat + " -o " + cat+".jl; cd .."
-        path = "t66ySpider/" + cat + ".jl"
+        path = "/home/pi/Xin.jsonlines"
         print(cmd, path)
         if not os.path.exists(path):
             os.system(cmd)
@@ -214,7 +224,7 @@ def main():
 
         p = Producer(needImage, needTorrent, path)
 
-        p.parse_file()
+        # p.parse_file()
         p.check_make_dir(p.base_dir)
 
         pool = ThreadPool(12)
