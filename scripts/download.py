@@ -142,7 +142,7 @@ class Producer:
 
     # parse the  file
     def parse_file(self):
-        with jsonlines.open(self.file) as reader:
+        with jsonlines.open(self.file_path) as reader:
             for obj in reader:  # title & image list
                 self.m_list.append(obj.copy())
         # get item number
