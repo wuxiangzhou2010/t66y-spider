@@ -40,7 +40,7 @@ class Producer:
         self.total = 0
         self.file_path = file_path
         self.downloaded = 0
-        self.base_dir = u"/home/pi/Down/Down/"
+        self.base_dir = u"/home/pi/Down/"
         self.needImage = needImage
         self.needTorrent = needTorrent
         self.parse_file()
@@ -161,7 +161,7 @@ class Producer:
         self.get_all_obj_image_torrent(item)
         self.downloaded += 1
         self.print_progress()
-
+# 
     @staticmethod
     def get_image_from_link(link, name):
         try:
